@@ -18,7 +18,7 @@ class DailyExpense(models.Model):
     def __str__(self):
         return self.expense_type
 
-class OfficeRent(models.Model):
+class OfficeRentExpense(models.Model):
     PAYMENT_METHOD = (
         ('Cash', 'Cash'),
         ('Cheque', 'Cheque'),
@@ -66,7 +66,7 @@ class UtilityExpense(models.Model):
     def __str__(self):
         return self.utility_category
 
-class OfficeRent(models.Model):
+class DocumentRenewalExpense(models.Model):
     PAYMENT_METHOD = (
         ('Cash', 'Cash'),
         ('Cheque', 'Cheque'),
