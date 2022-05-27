@@ -8,7 +8,7 @@ class Asset(models.Model):
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     asset_price = models.IntegerField()
     purchase_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
-    depreciation_percent = models.IntegerField()
+    depreciation_percent = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.asset_name

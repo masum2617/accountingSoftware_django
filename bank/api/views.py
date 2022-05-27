@@ -55,12 +55,9 @@ class BankListDetailView(APIView):
 
     def patch(self, request, pk):
         bank = self.get_object(pk)
-        dailyExpense = DailyExpense.objects.get(method_of_payment='Bank')
-        print(dailyExpense.price)
-        bank.amount_of_money= self.add_money(dailyExpense.price , bank.amount_of_money)
-        print("UPDATE: ", bank.amount_of_money)
         serializer = BankSerializer(bank, data=request.data,partial=True)
         print("SERIALIZER: ", serializer)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

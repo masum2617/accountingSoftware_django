@@ -30,8 +30,6 @@ def DailyExpenseDetail(request, pk):
     except DailyExpense.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-
-
     else:
         print("NOT GOT IT")
 
@@ -59,8 +57,3 @@ def DailyExpenseDetail(request, pk):
 # class DailyExpenseDetail(generics.RetrieveUpdateDestroyAPIView):
 #     queryset = DailyExpense.objects.all()
 #     serializer_class = DailyExpenseSerializer
-
-#     def get(self, request, *args, **kwargs):
-#         print("From overrided get: ", args, kwargs)
-#         # print("REquest: ", instance.data)
-#         return self.retrieve(request, *args, **kwargs)

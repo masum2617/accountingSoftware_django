@@ -1,11 +1,12 @@
 from django.db import models
+from bank.models import Bank
 
 # Create your models here.
 class DailyExpense(models.Model):
     PAYMENT_METHOD = (
         ('Cash', 'Cash'),
         ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
+        ('Bank', 'Bank Transfer'), 
     )
     expense_type  = models.CharField(max_length=50)
     price = models.IntegerField()
@@ -13,6 +14,8 @@ class DailyExpense(models.Model):
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     note = models.TextField(null=True,blank=True)
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
+    is_paid = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
@@ -22,12 +25,14 @@ class OfficeRentExpense(models.Model):
     PAYMENT_METHOD = (
         ('Cash', 'Cash'),
         ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
+        ('Bank', 'Bank Transfer'), 
     )
     monthly_cost = models.IntegerField()
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     note = models.TextField(null=True,blank=True)
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
+    is_paid = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
@@ -37,7 +42,7 @@ class UtilityExpense(models.Model):
     PAYMENT_METHOD = (
         ('Cash', 'Cash'),
         ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
+        ('Bank', 'Bank Transfer'), 
     )
     MONTH = (
         ('January', 'January'),
@@ -61,6 +66,8 @@ class UtilityExpense(models.Model):
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     note = models.TextField(null=True,blank=True)
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
+    is_paid = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
@@ -70,7 +77,7 @@ class DocumentRenewalExpense(models.Model):
     PAYMENT_METHOD = (
         ('Cash', 'Cash'),
         ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
+        ('Bank', 'Bank Transfer'), 
     )
     document_name  = models.CharField(max_length=50)
     issue_authority  = models.CharField(max_length=50, null=True, blank=True)
@@ -78,6 +85,8 @@ class DocumentRenewalExpense(models.Model):
     renewal_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     note = models.TextField(null=True,blank=True)
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
+    is_paid = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
     
     def __str__(self):
@@ -87,13 +96,15 @@ class MiscExpense(models.Model):
     PAYMENT_METHOD = (
         ('Cash', 'Cash'),
         ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
+        ('Bank', 'Bank Transfer'), 
     )
     expense_name  = models.CharField(max_length=50)
     price = models.IntegerField()
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     note = models.TextField(null=True,blank=True)
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
+    is_paid = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
