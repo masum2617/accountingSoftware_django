@@ -18,6 +18,7 @@ class Statement(models.Model):
     amount_of_money = models.IntegerField(null=True,blank=True)
     date_of_money_in = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
+    id_of_sector = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f'money coming from {self.coming_from_sector}'
+        return f'Coming From: {self.coming_from_sector}'

@@ -27,6 +27,7 @@ class OfficeRentExpense(models.Model):
         ('Cheque', 'Cheque'),
         ('Bank', 'Bank Transfer'), 
     )
+    expense_type = models.CharField(max_length=50, default='Office Rent')
     monthly_cost = models.IntegerField()
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
@@ -36,7 +37,7 @@ class OfficeRentExpense(models.Model):
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
-        return f"Office monthly rent {self.monthly_cost}"
+        return self.expense_type
 
 class UtilityExpense(models.Model):
     PAYMENT_METHOD = (

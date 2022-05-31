@@ -1,4 +1,4 @@
-from hashlib import blake2b
+from bank.models import Bank
 from django.db import models
 
 # Create your models here.
@@ -15,6 +15,7 @@ class CompanyPayable(models.Model):
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     # paid_by = Employee
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     note = models.TextField(null=True,blank=True)
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
@@ -34,6 +35,7 @@ class PersonalPayable(models.Model):
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     # paid_by = Employee
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     note = models.TextField(null=True,blank=True)
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
@@ -58,6 +60,7 @@ class EmployeePayable(models.Model):
     paid_by = models.CharField(max_length=50)
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
     # paid_by = Employee
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     note = models.TextField(null=True,blank=True)
     salary_paid_status = models.BooleanField(default=False)
     loan_paid_status = models.BooleanField(default=False)
@@ -79,6 +82,7 @@ class JapanSchoolPayable(models.Model):
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     paid_by = models.CharField(max_length=50)
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     note = models.TextField(null=True,blank=True)
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
@@ -100,6 +104,7 @@ class AgentPayable(models.Model):
     date_of_payment = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
     paid_by = models.CharField(max_length=50)
     method_of_payment = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='NULL')
+    payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     note = models.TextField(null=True,blank=True)
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)

@@ -1,10 +1,10 @@
 from django.http import Http404
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
-from bank.models import Bank
+from bank.models import Bank, Statement
 from expenses.models import DailyExpense
-from .serializers import BankSerializer
+from .serializers import BankSerializer, StatementSerializer
 
 from expenses.models import DailyExpense
 
@@ -67,3 +67,15 @@ class BankListDetailView(APIView):
         bank = self.get_object(pk)
         bank.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+# Statement Serializer
+class StatementListView(generics.ListCreateAPIView):
+    queryset = Statement.objects.all()
+    serializer_class = StatementSerializer
+
+
+class StatementDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Statement.objects.all()
+    serializer_class = StatementSerializer

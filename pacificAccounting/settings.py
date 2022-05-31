@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'django_nose',
     'rest_framework',
 
+    'drf_messages',
+
 ]
 
 MIDDLEWARE = [
@@ -59,6 +61,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+
 ]
 
 ROOT_URLCONF = 'pacificAccounting.urls'
@@ -143,3 +149,4 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEST_WITHOUT_MIGRATIONS_COMMAND = 'django_nose.management.commands.test.Command'
+MESSAGE_STORAGE = "drf_messages.storage.DBStorage"
