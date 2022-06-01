@@ -16,6 +16,7 @@ class DailyExpense(models.Model):
     note = models.TextField(null=True,blank=True)
     payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
@@ -34,6 +35,7 @@ class OfficeRentExpense(models.Model):
     note = models.TextField(null=True,blank=True)
     payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
@@ -69,6 +71,7 @@ class UtilityExpense(models.Model):
     note = models.TextField(null=True,blank=True)
     payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):
@@ -88,6 +91,7 @@ class DocumentRenewalExpense(models.Model):
     note = models.TextField(null=True,blank=True)
     payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
     
     def __str__(self):
@@ -106,6 +110,7 @@ class MiscExpense(models.Model):
     note = models.TextField(null=True,blank=True)
     payment_bank = models.ForeignKey(Bank, on_delete=models.CASCADE, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
     # paid_by = models.ForeignKey() #employee
 
     def __str__(self):

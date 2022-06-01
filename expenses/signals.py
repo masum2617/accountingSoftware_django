@@ -23,7 +23,7 @@ def updateStatementForExepenses(modelName, expense_type, price, date_of_payment,
 @receiver(post_save, sender=DailyExpense)
 def dailyExpense_post_save(sender,instance, created, **kwargs):
     if created:
-        if instance.payment_bank is not None and instance.is_paid == True:
+        if instance.payment_bank is not None and instance.connect_with_bank == True:
             #save money trace in the statement model for future trace
             updateStatementForExepenses( Statement,instance.expense_type, instance.price,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id)
             
@@ -39,27 +39,27 @@ def dailyExpense_post_save(sender,instance, created, **kwargs):
 @receiver(post_save, sender=UtilityExpense)
 def utilityExpense_post_save(sender,instance, created, **kwargs):
     if created:
-        if instance.payment_bank is not None and instance.is_paid == True:
+        if instance.payment_bank is not None and instance.connect_with_bank == True:
             updateStatementForExepenses( Statement,instance.utility_category, instance.monthly_bill,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id)
 
 
 @receiver(post_save, sender=DocumentRenewalExpense)
 def dailyExpense_post_save(sender,instance, created, **kwargs):
     if created:
-        if instance.payment_bank is not None and instance.is_paid == True:
+        if instance.payment_bank is not None and instance.connect_with_bank == True:
             #save money trace in the statement model for future trace
             updateStatementForExepenses( Statement,instance.document_name, instance.renewal_amount,instance.renewal_date,instance.payment_bank, instance.payment_bank.id)
 
 @receiver(post_save, sender=OfficeRentExpense)
 def dailyExpense_post_save(sender,instance, created, **kwargs):
     if created:
-        if instance.payment_bank is not None and instance.is_paid == True:
+        if instance.payment_bank is not None and instance.connect_with_bank == True:
             #save money trace in the statement model for future trace
             updateStatementForExepenses( Statement,instance.expense_type, instance.monthly_cost,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id)
 
 @receiver(post_save, sender=MiscExpense)
 def dailyExpense_post_save(sender,instance, created, **kwargs):
     if created:
-        if instance.payment_bank is not None and instance.is_paid == True:
+        if instance.payment_bank is not None and instance.connect_with_bank == True:
             #save money trace in the statement model for future trace
             updateStatementForExepenses( Statement,instance.expense_name, instance.price,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id)

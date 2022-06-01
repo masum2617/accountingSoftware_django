@@ -20,6 +20,7 @@ class CompanyPayable(models.Model):
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
 
     def __str__(self):
         return self.company_name
@@ -40,6 +41,7 @@ class PersonalPayable(models.Model):
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -67,6 +69,8 @@ class EmployeePayable(models.Model):
     bonus_paid_status = models.BooleanField(default=False)
     medicalExpense_paid_status = models.BooleanField(default=False)
 
+    connect_with_bank = models.BooleanField(default=False)
+
 class JapanSchoolPayable(models.Model):
 
     PAYMENT_METHOD = (
@@ -87,6 +91,7 @@ class JapanSchoolPayable(models.Model):
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)
 
 class AgentPayable(models.Model):
 
@@ -109,3 +114,4 @@ class AgentPayable(models.Model):
     is_paid = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
+    connect_with_bank = models.BooleanField(default=False)

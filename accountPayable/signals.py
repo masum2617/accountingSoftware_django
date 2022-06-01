@@ -19,5 +19,5 @@ def updateStatementForExepenses(modelName, expense_type, price, date_of_payment,
 @receiver(post_save, sender=CompanyPayable)
 def asset_post_save(sender,instance, created, **kwargs):
     if created:
-        if instance.payment_bank is not None and instance.is_paid == True:
+        if instance.payment_bank is not None and instance.connect_with_bank == True:
             updateStatementForExepenses( Statement,instance.company_name, instance.payable_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
