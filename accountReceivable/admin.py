@@ -11,3 +11,6 @@ class StudentReceivableAdmin(admin.ModelAdmin):
 
 admin.site.register(CompanyReceivable,CompanyReceivableAdmin)
 admin.site.register(StudentReceivable, StudentReceivableAdmin)
+admin.site.register(JapanSchoolReceivable)
+admin.site.register(PersonalReceivable)
+

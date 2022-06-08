@@ -1,9 +1,9 @@
-from tkinter.tix import Tree
 from django.db import models
 import uuid
 from student.models import Student
 from employee.models import Employee,Agent
 from bank.models import Bank
+from services.models import School, BookPurchase
 
 # Create your models here.
 class CompanyReceivable(models.Model):
@@ -57,7 +57,7 @@ class JapanSchoolReceivable(models.Model):
         ('Bank', 'Bank_Transfer'), 
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    # school_name = models.ForeignKey()
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
     # student_id will be automatically comes from student table
     receivable_amount = models.IntegerField()
@@ -72,7 +72,7 @@ class JapanSchoolReceivable(models.Model):
     connect_with_bank = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.student.student_name
+        return self.school.school_name
 
 
 class StudentReceivable(models.Model):
