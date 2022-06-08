@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'accountPayable.apps.AccountpayableConfig',
     'accountReceivable.apps.AccountreceivableConfig',
     'services.apps.ServicesConfig',
-    'users.apps.UsersConfig',
+    'employee.apps.EmployeeConfig',
     'expenses.apps.ExpensesConfig',
     'bank.apps.BankConfig',
     'student.apps.StudentConfig',

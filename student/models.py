@@ -4,11 +4,6 @@ from random import randint, randrange
 def random_studentID():
     return randrange(10000, 100000,5)
 
-# class StudentManage(models.Manager):
-    
-#     def setStudentID(self):
-#         students = self.get_querySet()
-#         if(self.student_id == '' )
 
 class Student(models.Model):
     GENDER_CHOICE = (
@@ -17,18 +12,19 @@ class Student(models.Model):
         ('Other', 'Other')
     )
     student_name = models.CharField(max_length=50)
-    student_id = models.IntegerField(unique=True)
-    father_name = models.CharField(max_length=50)
-    mother_name = models.CharField(max_length=50)
+    student_id = models.IntegerField(unique=True, null=True, blank=True)
+    father_name = models.CharField(max_length=50, null=True)
+    mother_name = models.CharField(max_length=50,null=True)
     date_of_birth  = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True )
-    age =  models.IntegerField()
+    age =  models.IntegerField(null=True, blank=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICE, default='NULL')
-    present_address = models.TextField()
-    premanent_address = models.TextField()
+    present_address = models.TextField(null=True, blank=True)
+    premanent_address = models.TextField(null=True, blank=True)
     contact_number = models.BigIntegerField()
     student_email = models.EmailField(max_length=50, unique=True)
     date_of_registration  = models.DateField(auto_now_add=True, blank=True )
-    student_photo = models.ImageField(upload_to='media/students/')
+    student_photo = models.ImageField(upload_to='students/', null=True, blank=True)
+    
 
     def __str__(self):
         return self.student_name
@@ -46,7 +42,7 @@ class EmergencyContact(models.Model):
 
 class EducationalRecord(models.Model):
     education_category = models.CharField(max_length=30)
-    cgpa_or_gpa = models.FloatField()
+    cgpa_or_gpa = models.FloatField(null=True, blank=True)
     passing_year = models.DateField(auto_now_add=False, auto_now=False,blank=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 

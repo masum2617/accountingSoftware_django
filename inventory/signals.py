@@ -17,6 +17,7 @@ def updateStatementForExepenses(modelName, expense_type, price, date_of_payment,
     bank.amount_of_money= less_money_from_bank(bank.amount_of_money , price)
     bank.save()
 
+# adding slug field
 @receiver(pre_save, sender=Asset)
 def asset_pre_save(sender,instance, *args, **kwargs):
     if not instance.slug:
