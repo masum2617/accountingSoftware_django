@@ -10,7 +10,7 @@ def less_money_from_bank(current_amount, new_money_in):
     return current_amount - new_money_in
 
 # function to save statment and update bank balance for each expense
-def updateStatementForExepenses(modelName, coming_from,category, asset_price, date_of_payment, payment_bank, bank_id,paid_to, comment=""):
+def updateStatementForExepenses(modelName, coming_from,category, asset_price, date_of_payment, payment_bank, bank_id, comment=""):
     modelName.objects.create(coming_from_sector=coming_from,payment_category=category, amount_of_money=asset_price, date_of_transaction=date_of_payment, bank=payment_bank, comment=comment)
 
     bank = Bank.objects.get(id=bank_id)

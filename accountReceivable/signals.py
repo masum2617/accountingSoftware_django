@@ -38,13 +38,12 @@ def receivable_post_save(sender,instance, created, **kwargs):
             pass
 
 
-
 # signal for Japan School 
 @receiver(post_save, sender=JapanSchoolReceivable)
 def receivable_post_save(sender,instance, created, **kwargs):
     if created:
         if instance.received_bank is not None and instance.connect_with_bank == True:
-            updateStatementForReceivable( Statement,instance.person_name, "Japan School Receivable", instance.receivable_amount,instance.date_of_receive,instance.received_bank, instance.received_by, instance.received_bank.id, instance.id)
+            updateStatementForReceivable( Statement,instance.school.school_name, "Japan School Receivable", instance.receivable_amount,instance.date_of_receive,instance.received_bank, instance.received_by, instance.received_bank.id, instance.id)
         else:
             pass
 

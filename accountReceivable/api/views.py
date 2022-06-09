@@ -42,6 +42,8 @@ class CompanyReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
         updated_receivable_amount = int(request.data.get('receivable_amount'))
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
+        # get current is_Received status
+        current_is_received = companyReceivable.is_received
         # get the bank from serializer.data
         received_bank = request.data.get('received_bank')
         bank = Bank.objects.get(pk=received_bank)
@@ -49,16 +51,14 @@ class CompanyReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
         try:
             # grab the current expense amount from Statement
             companyReceivable_receive_statement = Statement.objects.get(id_of_sector=companyReceivable.id)
-            print("STATEMENT: ", companyReceivable_receive_statement)
+            
         except Statement.DoesNotExist:
             # create Statement for particular expense if bank
-            if(bank_connection):
+            if(bank_connection and current_is_received==False):
                 company_name = request.data.get('company_name')
                 receivable_amount = int(request.data.get('receivable_amount'))
                 date_of_receive = request.data.get('date_of_receive')
                 received_by = request.data.get('received_by')
-                # received_bank = serializer.data.get('received_bank')
-                # bank = Bank.objects.get(pk=received_bank)
                 bank.amount_of_money = bank.amount_of_money+receivable_amount
                 bank.save()
                 companyReceivable_receive_statement=Statement.objects.create(coming_from_sector=company_name,payment_category="Company Receivable", received_by=received_by, amount_of_money=receivable_amount, date_of_transaction=date_of_receive, bank=bank, id_of_sector=companyReceivable.pk)
@@ -71,16 +71,15 @@ class CompanyReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         if(bank_connection):
             # compare with coming data from serializer.data
-            if(current_receivable_amount == updated_receivable_amount):
-                print("STATEMENT: ", companyReceivable_receive_statement)
-                bank.amount_of_money = (bank.amount_of_money + current_receivable_amount) - updated_receivable_amount
+            if(current_is_received==False and current_receivable_amount == updated_receivable_amount):
+                
+                bank.amount_of_money = (bank.amount_of_money + current_receivable_amount) 
                 bank.save()
                 companyReceivable_receive_statement.amount_of_money = current_receivable_amount
                 companyReceivable_receive_statement.save()
 
-            elif (current_receivable_amount != updated_receivable_amount):
+            elif (current_is_received==True and current_receivable_amount != updated_receivable_amount):
                 # update amount to the bank model amount
-                # bank = Bank.objects.get(pk=received_bank)
                 bank.amount_of_money = (bank.amount_of_money - current_receivable_amount) + updated_receivable_amount
                 bank.save()
                 companyReceivable_receive_statement.amount_of_money = updated_receivable_amount
@@ -89,7 +88,6 @@ class CompanyReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
                 messages.warning(serializer, 'Nothing to update!')
         elif(bank_connection == False):
             # if bank connection is changed to false (from true)
-            # bank = Bank.objects.get(pk=payment_bank)
             bank.amount_of_money = bank.amount_of_money - current_receivable_amount 
             bank.save()
             # companyPayable_expense_statement.amount_of_money = updated_expense_amount
@@ -128,6 +126,8 @@ class PersonalReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
         updated_receivable_amount = int(request.data.get('receivable_amount'))
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
+        # get current is_received status
+        current_is_received = personalReceivable.is_received
         # get the bank from serializer.data
         received_bank = request.data.get('received_bank')
         bank = Bank.objects.get(pk=received_bank)
@@ -137,30 +137,30 @@ class PersonalReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
             personalReceivable_receive_statement = Statement.objects.get(id_of_sector=personalReceivable.id)
         except Statement.DoesNotExist:
             # create Statement for particular expense if bank
-            if(bank_connection):
+            if(bank_connection and current_is_received == False):
                 person_name = request.data.get('person_name')
                 receivable_amount = int(request.data.get('receivable_amount'))
                 date_of_receive = request.data.get('date_of_receive')
                 received_by = request.data.get('received_by')
-                bank.amount_of_money = bank.amount_of_money+receivable_amount
+                bank.amount_of_money = bank.amount_of_money + receivable_amount
                 bank.save()
                 personalReceivable_receive_statement=Statement.objects.create(coming_from_sector=person_name,payment_category="Personal Receivable", received_by=received_by, amount_of_money=receivable_amount, date_of_transaction=date_of_receive, bank=bank, id_of_sector=personalReceivable.pk)
                 personalReceivable_receive_statement.save(force_insert=True)
                 
             else:
-                pass
+                messages.warning(request, "Something wrong check again!")
         # assign company payable current amount to a variable
         current_receivable_amount = personalReceivable.receivable_amount
 
         if(bank_connection):
             # compare with coming data from serializer.data
-            if(current_receivable_amount == updated_receivable_amount):
+            if(current_is_received == False and current_receivable_amount == updated_receivable_amount):
                 bank.amount_of_money = (bank.amount_of_money + current_receivable_amount) - updated_receivable_amount
                 bank.save()
                 personalReceivable_receive_statement.amount_of_money = current_receivable_amount
                 personalReceivable_receive_statement.save()
 
-            elif (current_receivable_amount != updated_receivable_amount):
+            elif (current_is_received == True and current_receivable_amount != updated_receivable_amount):
                 # update amount to the bank model amount
                 # bank = Bank.objects.get(pk=received_bank)
                 bank.amount_of_money = (bank.amount_of_money - current_receivable_amount) + updated_receivable_amount
@@ -189,7 +189,7 @@ class PersonalReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
 # JAPAN SCHOOL START
 class SchoolReceivableListView(generics.ListCreateAPIView):
     queryset = JapanSchoolReceivable.objects.all()
-    serializer_class = PersonalReceivableSerializer
+    serializer_class = SchoolReceivableSerializer
 
 
 class SchoolReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -206,9 +206,11 @@ class SchoolReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         schoolReceivable = self.get_object()
         updated_receivable_amount = int(request.data.get('receivable_amount'))
+        # get the current is_received status
+        current_is_received = schoolReceivable.is_received
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
-        # get the bank from serializer.data
+        # get the bank 
         received_bank = request.data.get('received_bank')
         bank = Bank.objects.get(pk=received_bank)
 
@@ -217,12 +219,12 @@ class SchoolReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
             schoolReceivable_receive_statement = Statement.objects.get(id_of_sector=schoolReceivable.id)
         except Statement.DoesNotExist:
             # create Statement for particular expense if bank
-            if(bank_connection):
+            if(bank_connection and current_is_received == False):
                 school_name = request.data.get('school_name')
                 receivable_amount = int(request.data.get('receivable_amount'))
                 date_of_receive = request.data.get('date_of_receive')
                 received_by = request.data.get('received_by')
-                bank.amount_of_money = bank.amount_of_money+receivable_amount
+                bank.amount_of_money = bank.amount_of_money + receivable_amount
                 bank.save()
                 schoolReceivable_receive_statement = Statement.objects.create(coming_from_sector=school_name.school_name,payment_category="School Receivable", received_by=received_by, amount_of_money=receivable_amount, date_of_transaction=date_of_receive, bank=bank, id_of_sector=schoolReceivable.pk)
                 schoolReceivable_receive_statement.save(force_insert=True)
@@ -234,15 +236,14 @@ class SchoolReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         if(bank_connection):
             # compare with coming data from serializer.data
-            if(current_receivable_amount == updated_receivable_amount):
-                bank.amount_of_money = (bank.amount_of_money + current_receivable_amount) - updated_receivable_amount
+            if(current_is_received == False and current_receivable_amount == updated_receivable_amount):
+                bank.amount_of_money = (bank.amount_of_money + current_receivable_amount)
                 bank.save()
                 schoolReceivable_receive_statement.amount_of_money = current_receivable_amount
                 schoolReceivable_receive_statement.save()
 
-            elif (current_receivable_amount != updated_receivable_amount):
+            elif (current_is_received == True and current_receivable_amount != updated_receivable_amount):
                 # update amount to the bank model amount
-                # bank = Bank.objects.get(pk=received_bank)
                 bank.amount_of_money = (bank.amount_of_money - current_receivable_amount) + updated_receivable_amount
                 bank.save()
                 schoolReceivable_receive_statement.amount_of_money = updated_receivable_amount
@@ -264,7 +265,6 @@ class SchoolReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # JAPAN SCHOOL Payable END
-
 
 # Student Receivable START
 class StudentlReceivableListView(generics.ListCreateAPIView):
@@ -297,8 +297,8 @@ class StudentReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
         bank_connection = request.data.get('connect_with_bank')
         # get the bank from serializer.data
         received_bank = request.data.get('received_bank')
-        # bank = Bank.objects.get(pk=received_bank)
-
+       
+        
             # create Statement for particular expense if bank
         if(bank_connection):
             student_name = request.data.get('student')

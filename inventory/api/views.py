@@ -25,9 +25,15 @@ class AssetDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         asset = self.get_object()
-        updated_asset_price = int(request.data.get('asset_price'))
+        # assign current asset price to a variable
+        current_asset_price = asset.asset_price
+        # get the current is_paid status
+        current_is_paid= asset.is_paid
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
+
+        payment_bank = request.data.get('payment_bank')
+        bank = Bank.objects.get(pk=payment_bank)
 
         try:
             # grab the current expense amount from Statement
@@ -36,35 +42,34 @@ class AssetDetailView(generics.RetrieveUpdateDestroyAPIView):
             # create Statement for particular expense if bank
             if(bank_connection):
                 asset_name = request.data.get('asset_name')
-                # payable_amount = request.data.get('payable_amount')
+                updated_asset_price = int(request.data.get('asset_price'))
                 purchase_date = request.data.get('purchase_date')
-                payment_bank = request.data.get('payment_bank')
-                bank = Bank.objects.get(pk=payment_bank)
                 asset_expense_statement=Statement.objects.create(coming_from_sector=asset_name,payment_category="Asset Payment", amount_of_money=updated_asset_price, date_of_transaction=purchase_date, bank=bank, id_of_sector=asset.id)
                 asset_expense_statement.save()
             else:
                 pass
-        # assign company payable current amount to a variable
-        current_asset_price = asset.asset_price
+
         # getting the linked bank from requested data for updating
         payment_bank = int(request.data.get('payment_bank'))
 
-        if(bank_connection):
+        if(bank_connection): #if true bank connection
             # compare with coming data from request.data
-            if (current_asset_price != updated_asset_price):
-                # update amount to the bank model amount
-                bank = Bank.objects.get(pk=payment_bank)
-                bank.amount_of_money = (bank.amount_of_money + current_asset_price) - updated_asset_price
+            
+            if(current_is_paid == False and current_asset_price == updated_asset_price):
+                bank.amount_of_money = bank.amount_of_money + current_asset_price
                 bank.save()
-                asset_expense_statement.amount_of_money = updated_asset_price
-                asset_expense_statement.save()
-            else:
-                pass
+            elif(current_is_paid == True and current_asset_price != updated_asset_price):
+                bank.amount_of_money = (bank.amount_of_money - current_asset_price) + updated_asset_price
+                bank.save()
+
+            # update statement
+            asset_expense_statement.amount_of_money = updated_asset_price
+            asset_expense_statement.save()
+            # else:
+            messages.success(request, "Successfully UPDATED")
         else:
-            bank = Bank.objects.get(pk=payment_bank)
-            bank.amount_of_money = bank.amount_of_money + (current_asset_price- updated_asset_price)
+            bank.amount_of_money = bank.amount_of_money - current_asset_price
             bank.save()
-            # companyPayable_expense_statement.amount_of_money = updated_expense_amount
             asset_expense_statement.delete()
             messages.success(request, "deleted statement")
 
