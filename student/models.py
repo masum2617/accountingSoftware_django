@@ -1,9 +1,7 @@
+from unicodedata import category
 from django.db import models
-from random import randint, randrange
-# Create your models here.      
-def random_studentID():
-    return randrange(10000, 100000,5)
 
+# Create your models here.      
 
 class Student(models.Model):
     GENDER_CHOICE = (
@@ -31,22 +29,33 @@ class Student(models.Model):
 
 class EmergencyContact(models.Model):
     full_name = models.CharField(max_length=50)
-    relation = models.CharField(max_length=50)
-    occupation = models.CharField(max_length=50)
+    relation = models.CharField(max_length=50,null=True, blank=True)
+    occupation = models.CharField(max_length=50,null=True, blank=True)
     contact_number = models.BigIntegerField()
     address = models.TextField(null=True, blank=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="emergencyContact")
 
     def __str__(self):
         return self.full_name
 
 class EducationalRecord(models.Model):
-    education_category = models.CharField(max_length=30)
+
+    SSC_DAKHIL = models.CharField(max_length=30,null=True, blank=True)
+    HSC_ALIM_DIPLOMA = models.CharField(max_length=30,null=True, blank=True)
+    HONOURS_DEGREE_FAZIL = models.CharField(max_length=30,null=True, blank=True)
+    MASTERS_KAMIL = models.CharField(max_length=30,null=True, blank=True)
     cgpa_or_gpa = models.FloatField(null=True, blank=True)
     passing_year = models.DateField(auto_now_add=False, auto_now=False,blank=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="student_educational_record")
 
     def __str__(self):
-        return self.education_category
+        return self.student.student_name
+
+# class StudentCheckList(models.Model):
+#     registration = models.BooleanField(default=False, blank=True)
+#     photo = models.BooleanField(default=False,blank=True)
+#     reason_for_studying_japan = models.TextField(null=True, blank=True)
+#     last_graduation_certificate = 
+
 
 

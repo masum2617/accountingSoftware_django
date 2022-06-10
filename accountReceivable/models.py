@@ -6,12 +6,14 @@ from bank.models import Bank
 from services.models import School, BookPurchase
 
 # Create your models here.
+PAYMENT_METHOD = (
+    ('Cash', 'Cash'),
+    ('Cheque', 'Cheque'),
+    ('Bank', 'Bank Transfer'), 
+)
+
 class CompanyReceivable(models.Model):
-    PAYMENT_METHOD = (
-        ('Cash', 'Cash'),
-        ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
-    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company_name = models.CharField(max_length=50)
     receivable_amount = models.IntegerField()
@@ -29,11 +31,7 @@ class CompanyReceivable(models.Model):
         return self.company_name
 
 class PersonalReceivable(models.Model):
-    PAYMENT_METHOD = (
-        ('Cash', 'Cash'),
-        ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
-    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,unique=True)
     person_name = models.CharField(max_length=50)
     receivable_amount = models.IntegerField()
@@ -51,11 +49,7 @@ class PersonalReceivable(models.Model):
         return self.person_name
 
 class JapanSchoolReceivable(models.Model):
-    PAYMENT_METHOD = (
-        ('Cash', 'Cash'),
-        ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
-    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True, blank=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
@@ -76,11 +70,7 @@ class JapanSchoolReceivable(models.Model):
 
 
 class StudentReceivable(models.Model):
-    PAYMENT_METHOD = (
-        ('Cash', 'Cash'),
-        ('Cheque', 'Cheque'),
-        ('Bank', 'Bank_Transfer'), 
-    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,unique=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
     # student_id will be automatically comes from student table

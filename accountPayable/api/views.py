@@ -31,6 +31,13 @@ class CompanyPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
         updated_expense_amount = int(request.data.get('payable_amount'))
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
+        # get the bank obj
+        payment_bank = request.data.get('payment_bank')
+        bank = Bank.objects.get(pk=payment_bank)
+         # assign company payable current amount to a variable
+        current_expense_amount = companyPayable.payable_amount
+        # get the current is_paid status from obj
+        current_is_paid = companyPayable.is_paid
 
         try:
             # grab the current expense amount from Statement
@@ -41,40 +48,36 @@ class CompanyPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
                 company_name = request.data.get('company_name')
                 payable_amount = request.data.get('payable_amount')
                 date_of_transaction = request.data.get('date_of_payment')
-                payment_bank = request.data.get('payment_bank')
-                bank = Bank.objects.get(pk=payment_bank)
-                companyPayable_expense_statement=Statement.objects.create(coming_from_sector=company_name, amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=companyPayable.id)
+                companyPayable_expense_statement=Statement.objects.create(coming_from_sector=company_name,category="Company Payable", amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=companyPayable.id)
                 companyPayable_expense_statement.save()
             else:
                 pass
-        # assign company payable current amount to a variable
-        current_expense_amount = companyPayable.payable_amount
-        # getting the linked bank from requested data for updating
-        payment_bank = int(request.data.get('payment_bank'))
-
-        if(bank_connection):
+       
+        if(bank_connection and payment_bank is not None):
             # compare with coming data from request.data
-            if (current_expense_amount != updated_expense_amount):
+            # if the statement created just now
+            if (current_is_paid == False and current_expense_amount == updated_expense_amount ):
+                bank.amount_of_money = (bank.amount_of_money - current_expense_amount)
+                bank.save()
+            # statement created before now want to update it
+            elif (current_is_paid == True and current_expense_amount != updated_expense_amount):
                 # update amount to the bank model amount
-                bank = Bank.objects.get(pk=payment_bank)
                 bank.amount_of_money = (bank.amount_of_money + current_expense_amount) - updated_expense_amount
                 bank.save()
                 companyPayable_expense_statement.amount_of_money = updated_expense_amount
                 companyPayable_expense_statement.save()
             else:
-                messages.warning(request, 'Please Check again!')
-        else:
-            bank = Bank.objects.get(pk=payment_bank)
-            bank.amount_of_money = bank.amount_of_money + (current_expense_amount- updated_expense_amount)
+                messages.warning(request, 'Nothing to update!')
+        
+        elif (not bank_connection):
+            bank.amount_of_money = bank.amount_of_money + current_expense_amount
             bank.save()
-            # companyPayable_expense_statement.amount_of_money = updated_expense_amount
             companyPayable_expense_statement.delete()
-            messages.success(request, "deleted statement")
+            messages.success(request, "deleted statement for company Payable")
 
         serializer = CompanyPayableSerializer(companyPayable, data=request.data)
         
         if serializer.is_valid():
-            print(serializer.validated_data.get('payable_amount'))
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -100,48 +103,54 @@ class PersonalPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         personalPayable = self.get_object()
+        # assign company payable current amount to a variable
+        current_expense_amount = personalPayable.payable_amount
         updated_expense_amount = int(request.data.get('payable_amount'))
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
+        # get the current is_paid status from obj
+        current_is_paid = personalPayable.is_paid
+        # get the connected bank
+        payment_bank = request.data.get('payment_bank')
+        bank = Bank.objects.get(pk=payment_bank)
 
         try:
             # grab the current expense amount from Statement
-            personalPayable_expense_statement = Statement.objects.get(id_of_sector=personalPayable.id)
+            personalPayable_expense_statement = Statement.objects.get(id_of_sector=personalPayable.pk)
         except Statement.DoesNotExist:
             # create Statement for particular expense if bank
             if(bank_connection):
                 person_name = request.data.get('person_name')
                 payable_amount = request.data.get('payable_amount')
                 date_of_transaction = request.data.get('date_of_payment')
-                payment_bank = request.data.get('payment_bank')
-                bank = Bank.objects.get(pk=payment_bank)
-                personalPayable_expense_statement=Statement.objects.create(coming_from_sector=person_name, amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=personalPayable.id)
+                personalPayable_expense_statement=Statement.objects.create(coming_from_sector=person_name,payment_category="Personal Payable", amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=personalPayable.id)
                 personalPayable_expense_statement.save()
             else:
                 pass
-        # assign company payable current amount to a variable
-        current_expense_amount = personalPayable.payable_amount
-        # getting the linked bank from requested data for updating
-        payment_bank = int(request.data.get('payment_bank'))
 
-        if(bank_connection):
+        if(bank_connection and payment_bank is not None):
             # compare with coming data from request.data
-            if (current_expense_amount != updated_expense_amount):
+            # if the statement created just now
+            if (current_is_paid == False and current_expense_amount == updated_expense_amount):
                 # update amount to the bank model amount
-                bank = Bank.objects.get(pk=payment_bank)
+                bank.amount_of_money = bank.amount_of_money - current_expense_amount 
+                bank.save()
+
+            # statement created before now want to update it
+            elif (current_is_paid == True and current_expense_amount != updated_expense_amount):
+                # update amount to the bank model amount
+                print("FROM UPDATING NOT MATch")
                 bank.amount_of_money = (bank.amount_of_money + current_expense_amount) - updated_expense_amount
                 bank.save()
                 personalPayable_expense_statement.amount_of_money = updated_expense_amount
                 personalPayable_expense_statement.save()
             else:
-                messages.warning(request, 'Please Check again!')
-        else:
-            bank = Bank.objects.get(pk=payment_bank)
-            bank.amount_of_money = bank.amount_of_money + (current_expense_amount- updated_expense_amount)
+                messages.warning(request, 'Something Wrong! Please Check again!')
+        if (not bank_connection):
+            bank.amount_of_money = bank.amount_of_money + current_expense_amount
             bank.save()
-            # companyPayable_expense_statement.amount_of_money = updated_expense_amount
             personalPayable_expense_statement.delete()
-            messages.success(request, "deleted statement")
+            messages.success(request, "deleted  Personal Payabale statement")
 
         serializer = PersonalPayableSerializer(personalPayable, data=request.data)
         
@@ -175,6 +184,13 @@ class SchoolPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
         updated_expense_amount = int(request.data.get('payable_amount'))
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
+        # get the bank obj
+        payment_bank = request.data.get('payment_bank')
+        bank = Bank.objects.get(pk=payment_bank)
+        # assign company payable current amount to a variable
+        current_expense_amount = schoolPayable.payable_amount
+        # get the current is_paid status from obj
+        current_is_paid = schoolPayable.is_paid
 
         try:
             # grab the current expense amount from Statement
@@ -182,39 +198,38 @@ class SchoolPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
         except Statement.DoesNotExist:
             # create Statement for particular expense if bank
             if(bank_connection):
+                school = request.data.get('school')
                 other_school = request.data.get('other_school')
                 payable_amount = request.data.get('payable_amount')
                 date_of_transaction = request.data.get('date_of_payment')
-                payment_bank = request.data.get('payment_bank')
-                bank = Bank.objects.get(pk=payment_bank)
-                print(other_school)
-                schoolPayable_expense_statement=Statement.objects.create(coming_from_sector=other_school, amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=schoolPayable.id)
+                schoolPayable_expense_statement = Statement.objects.create(coming_from_sector=school.school_name if school is not None else other_school, amount_of_money=payable_amount,payment_category="School Payable", date_of_transaction=date_of_transaction, bank=bank, id_of_sector=schoolPayable.id)
                 schoolPayable_expense_statement.save()
             else:
                 pass
-        # assign company payable current amount to a variable
-        current_expense_amount = schoolPayable.payable_amount
-        # getting the linked bank from requested data for updating
-        payment_bank = int(request.data.get('payment_bank'))
 
-        if(bank_connection):
+        if(bank_connection and payment_bank is not None):
             # compare with coming data from request.data
-            if (current_expense_amount != updated_expense_amount):
+            if (current_is_paid == False and current_expense_amount == updated_expense_amount):
                 # update amount to the bank model amount
-                bank = Bank.objects.get(pk=payment_bank)
+                
+                bank.amount_of_money = (bank.amount_of_money - current_expense_amount)
+                bank.save()
+                # schoolPayable_expense_statement.amount_of_money = updated_expense_amount
+                # schoolPayable_expense_statement.save()
+            elif ( current_is_paid == True and current_expense_amount != updated_expense_amount) :
                 bank.amount_of_money = (bank.amount_of_money + current_expense_amount) - updated_expense_amount
                 bank.save()
                 schoolPayable_expense_statement.amount_of_money = updated_expense_amount
                 schoolPayable_expense_statement.save()
+            
             else:
                 messages.warning(request, 'Please Check again!')
-        else:
-            bank = Bank.objects.get(pk=payment_bank)
-            bank.amount_of_money = bank.amount_of_money + (current_expense_amount- updated_expense_amount)
+        if (not bank_connection):
+            
+            bank.amount_of_money = bank.amount_of_money + current_expense_amount
             bank.save()
-            # companyPayable_expense_statement.amount_of_money = updated_expense_amount
             schoolPayable_expense_statement.delete()
-            messages.success(request, "deleted statement")
+            messages.success(request, "deleted school payable statement")
 
         serializer = SchoolPayableSerializer(schoolPayable, data=request.data)
         
@@ -246,6 +261,13 @@ class AgentPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
         updated_expense_amount = int(request.data.get('payable_amount'))
         # bank connection check
         bank_connection = request.data.get('connect_with_bank')
+         # get the current is_paid status from obj
+        current_is_paid = agentPayable.is_paid
+        # assign company payable current amount to a variable
+        current_expense_amount = agentPayable.payable_amount
+
+        payment_bank = request.data.get('payment_bank')
+        bank = Bank.objects.get(pk=payment_bank)
 
         try:
             # grab the current expense amount from Statement
@@ -256,35 +278,38 @@ class AgentPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
                 agent_name = request.data.get('agent_name')
                 payable_amount = request.data.get('payable_amount')
                 date_of_transaction = request.data.get('date_of_payment')
-                payment_bank = request.data.get('payment_bank')
-                bank = Bank.objects.get(pk=payment_bank)
-                agentPayable_expense_statement=Statement.objects.create(coming_from_sector=agent_name, amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=agent_name.id)
+                agentPayable_expense_statement=Statement.objects.create(coming_from_sector=agent_name, payment_category="Agent Payable",amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=agent_name.id)
                 agentPayable_expense_statement.save()
             else:
                 pass
-        # assign company payable current amount to a variable
-        current_expense_amount = agent_name.payable_amount
         # getting the linked bank from requested data for updating
-        payment_bank = int(request.data.get('payment_bank'))
-
-        if(bank_connection):
+        if(bank_connection and payment_bank is not None):
             # compare with coming data from request.data
-            if (current_expense_amount != updated_expense_amount):
+            if (current_is_paid == False and current_expense_amount == updated_expense_amount):
                 # update amount to the bank model amount
-                bank = Bank.objects.get(pk=payment_bank)
+                
+                bank.amount_of_money = bank.amount_of_money - current_expense_amount 
+                bank.save()
+                # agentPayable_expense_statement.amount_of_money = updated_expense_amount
+                # agentPayable_expense_statement.save()
+            # statement created before now want to update it
+            elif (current_is_paid == True and current_expense_amount != updated_expense_amount):
+                # update amount to the bank model amount
+                print("FROM UPDATING NOT MATch")
                 bank.amount_of_money = (bank.amount_of_money + current_expense_amount) - updated_expense_amount
                 bank.save()
                 agentPayable_expense_statement.amount_of_money = updated_expense_amount
                 agentPayable_expense_statement.save()
+            
             else:
                 messages.warning(request, 'Please Check again!')
         else:
-            bank = Bank.objects.get(pk=payment_bank)
-            bank.amount_of_money = bank.amount_of_money + (current_expense_amount- updated_expense_amount)
+            
+            bank.amount_of_money = bank.amount_of_money + current_expense_amount
             bank.save()
             # companyPayable_expense_statement.amount_of_money = updated_expense_amount
             agentPayable_expense_statement.delete()
-            messages.success(request, "deleted statement")
+            messages.success(request, "deleted agent payable statement")
 
         serializer = AgentPayableSerializer(agentPayable, data=request.data)
         
