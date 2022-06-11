@@ -1,10 +1,6 @@
-from django.http import Http404
-from rest_framework.response import Response
-from rest_framework import generics, status
-from django.contrib import messages
+from rest_framework import generics
 from .serializers import EmergencyContactSerializer,EducationalRecordSerializer,StudentSerializer
 from student.models import Student,EducationalRecord,EmergencyContact
-from bank.models import Bank,Statement
 
 class StudentListView(generics.ListCreateAPIView):
     queryset = Student.objects.all()

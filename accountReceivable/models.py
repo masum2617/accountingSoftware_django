@@ -3,7 +3,7 @@ import uuid
 from student.models import Student
 from employee.models import Employee,Agent
 from bank.models import Bank
-from services.models import School, BookPurchase
+from services.models import School, Book
 
 # Create your models here.
 PAYMENT_METHOD = (

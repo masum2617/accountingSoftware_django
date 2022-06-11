@@ -13,7 +13,6 @@ class EmergencyContactSerializer(serializers.ModelSerializer):
         model = EmergencyContact
         fields = '__all__'
 
-
 class StudentSerializer(serializers.ModelSerializer):
     student_educational_record = EducationalRecordSerializer(many=True)
     emergencyContact = EmergencyContactSerializer(many=True)
