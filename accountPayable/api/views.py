@@ -324,94 +324,94 @@ class EmployeePayableListView(generics.ListCreateAPIView):
     queryset = EmployeePayable.objects.all()
     serializer_class = EmployeePayableSerializer
 
-class EmployeePayableDetailView(generics.RetrieveUpdateDestroyAPIView):
+class EmployeePayableDetailView(generics.RetrieveDestroyAPIView):
     queryset = EmployeePayable.objects.all()
     serializer_class = EmployeePayableSerializer
 
-    def get_object(self):
-        try:
-            pk = self.kwargs.get('pk')
-            return EmployeePayable.objects.get(pk=pk)
-        except EmployeePayable.DoesNotExist:
-            raise Http404
+    # def get_object(self):
+    #     try:
+    #         pk = self.kwargs.get('pk')
+    #         return EmployeePayable.objects.get(pk=pk)
+    #     except EmployeePayable.DoesNotExist:
+    #         raise Http404
 
-    def put(self, request, *args, **kwargs):
-        employeePayable = self.get_object()
+    # def put(self, request, *args, **kwargs):
+    #     employeePayable = self.get_object()
 
-        # get the current salary of employee
-        current_salary = employeePayable.salary_amount
-        # getting data from request
-        updated_salary_amount = int(request.data.get('salary_amount'))
-        updated_loan_amount = int(request.data.get('loan_amount'))
-        updated_bonus_amount = int(request.data.get('bonus_amount'))
-        updated_medical_amount = int(request.data.get('medical_expense'))
-        date_of_payment = request.data.get('date_of_payment')
-        payment_bank = request.data.get('payment_bank')
-        current_employee = request.data.get('employee')
+    #     # get the current salary of employee
+    #     current_salary = employeePayable.salary_amount
+    #     # getting data from request
+    #     updated_salary_amount = int(request.data.get('salary_amount'))
+    #     updated_loan_amount = int(request.data.get('loan_amount'))
+    #     updated_bonus_amount = int(request.data.get('bonus_amount'))
+    #     updated_medical_amount = int(request.data.get('medical_expense'))
+    #     date_of_payment = request.data.get('date_of_payment')
+    #     payment_bank = request.data.get('payment_bank')
+    #     current_employee = request.data.get('employee')
 
-        # getting the paid status from all
-        salary_paid_status = request.data.get('salary_paid_status')
-        loan_paid_status = request.data.get('loan_paid_status')
-        bonus_paid_status = request.data.get('bonus_paid_status')
-        medicalExpense_paid_status = request.data.get('medicalExpense_paid_status')
+    #     # getting the paid status from all
+    #     salary_paid_status = request.data.get('salary_paid_status')
+    #     loan_paid_status = request.data.get('loan_paid_status')
+    #     bonus_paid_status = request.data.get('bonus_paid_status')
+    #     medicalExpense_paid_status = request.data.get('medicalExpense_paid_status')
 
-        # bank connection check
-        bank_connection = request.data.get('connect_with_bank')
-        # get the connected bank
-        bank = Bank.objects.get(pk=payment_bank)
+    #     # bank connection check
+    #     bank_connection = request.data.get('connect_with_bank')
+    #     # get the connected bank
+    #     bank = Bank.objects.get(pk=payment_bank)
 
-        try:
-            # grab the current expense amount from Statement
-            employeePayable_amount_statement = Statement.objects.get(id_of_sector=employeePayable.id)
-        except Statement.DoesNotExist:
-            # create Statement for particular expense if bank
-            if(bank_connection and salary_paid_status == True):
-                # bank = Bank.objects.get(pk=payment_bank)
-                # check for more condition
-                # creating a new statment for salary with specific employee
-                employeePayable_amount_statement=Statement.objects.create(coming_from_sector="Employee Payment", payment_category="salary", paid_to=employeePayable.employee.employee_name, paid_to_id = employeePayable.employee.id, amount_of_money=updated_salary_amount, date_of_transaction=date_of_payment, bank=bank, id_of_sector=employeePayable.id)
-                employeePayable_amount_statement.save()
-            else:
-                pass
+    #     try:
+    #         # grab the current expense amount from Statement
+    #         employeePayable_amount_statement = Statement.objects.get(id_of_sector=employeePayable.id)
+    #     except Statement.DoesNotExist:
+    #         # create Statement for particular expense if bank
+    #         if(bank_connection and salary_paid_status == True):
+    #             # bank = Bank.objects.get(pk=payment_bank)
+    #             # check for more condition
+    #             # creating a new statment for salary with specific employee
+    #             employeePayable_amount_statement=Statement.objects.create(coming_from_sector="Employee Payment", payment_category="salary", paid_to=employeePayable.employee.employee_name, paid_to_id = employeePayable.employee.id, amount_of_money=updated_salary_amount, date_of_transaction=date_of_payment, bank=bank, id_of_sector=employeePayable.id)
+    #             employeePayable_amount_statement.save()
+    #         else:
+    #             pass
 
-        # getting the linked bank from requested data for updating
-        payment_bank = int(request.data.get('payment_bank'))
+    #     # getting the linked bank from requested data for updating
+    #     payment_bank = int(request.data.get('payment_bank'))
 
-        if(bank_connection and salary_paid_status == True):
-            # Write more conditions HERE!!
-            if (updated_salary_amount > current_salary):
-                # update amount to the bank model amount
-                # bank = Bank.objects.get(pk=payment_bank)
-                bank.amount_of_money = (bank.amount_of_money + current_salary) - updated_salary_amount
-                bank.save()
-                employeePayable_amount_statement.amount_of_money = updated_salary_amount
-                employeePayable_amount_statement.save()
-            else:
-                pass
-        elif(bank_connection and loan_paid_status==True):
-            # check for loan amount
-            if (updated_loan_amount > 0):
-                bank.amount_of_money = (bank.amount_of_money + employeePayable.loan_amount) - updated_loan_amount
-                bank.save()
-                employeePayable_amount_statement=Statement.objects.create(coming_from_sector="Employee Loan: "+current_employee.employee_name, amount_of_money=updated_loan_amount, date_of_money_in=date_of_payment, bank=bank, id_of_sector=employeePayable.id)
-                employeePayable_amount_statement.save() 
-            else:
-                messages.warning(request, 'Please Check again!')
+    #     if(bank_connection and salary_paid_status == True):
+    #         # Write more conditions HERE!!
+    #         if (updated_salary_amount > current_salary):
+    #             # update amount to the bank model amount
+    #             # bank = Bank.objects.get(pk=payment_bank)
+    #             bank.amount_of_money = (bank.amount_of_money + current_salary) - updated_salary_amount
+    #             bank.save()
+    #             employeePayable_amount_statement.amount_of_money = updated_salary_amount
+    #             employeePayable_amount_statement.save()
+    #         else:
+    #             pass
+    #     elif(bank_connection and loan_paid_status==True):
+    #         # check for loan amount
+    #         if (updated_loan_amount > 0):
+    #             bank.amount_of_money = (bank.amount_of_money + employeePayable.loan_amount) - updated_loan_amount
+    #             bank.save()
+    #             employeePayable_amount_statement=Statement.objects.create(coming_from_sector="Employee Loan: "+current_employee.employee_name, amount_of_money=updated_loan_amount, date_of_money_in=date_of_payment, bank=bank, id_of_sector=employeePayable.id)
+    #             employeePayable_amount_statement.save() 
+    #         else:
+    #             messages.warning(request, 'Please Check again!')
 
-        # else:
-        #     bank = Bank.objects.get(pk=payment_bank)
-        #     bank.amount_of_money = bank.amount_of_money + (current_expense_amount- updated_salary_amount)
-        #     bank.save()
-        #     # companyPayable_expense_statement.amount_of_money = updated_expense_amount
-        #     agentPayable_expense_statement.delete()
-        #     messages.success(request, "deleted statement")
+    #     # else:
+    #     #     bank = Bank.objects.get(pk=payment_bank)
+    #     #     bank.amount_of_money = bank.amount_of_money + (current_expense_amount- updated_salary_amount)
+    #     #     bank.save()
+    #     #     # companyPayable_expense_statement.amount_of_money = updated_expense_amount
+    #     #     agentPayable_expense_statement.delete()
+    #     #     messages.success(request, "deleted statement")
 
-        serializer = EmployeePayableSerializer(employeePayable, data=request.data)
+    #     serializer = EmployeePayableSerializer(employeePayable, data=request.data)
         
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Employee Payable END
