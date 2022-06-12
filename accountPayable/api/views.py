@@ -278,7 +278,7 @@ class AgentPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
                 agent_name = request.data.get('agent_name')
                 payable_amount = request.data.get('payable_amount')
                 date_of_transaction = request.data.get('date_of_payment')
-                agentPayable_expense_statement=Statement.objects.create(coming_from_sector=agent_name, payment_category="Agent Payable",amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=agent_name.id)
+                agentPayable_expense_statement=Statement.objects.create(coming_from_sector=agent_name, payment_category="Agent Payable",amount_of_money=payable_amount, date_of_transaction=date_of_transaction, bank=bank, id_of_sector=agentPayable.id)
                 agentPayable_expense_statement.save()
             else:
                 pass
@@ -295,16 +295,14 @@ class AgentPayableDetailView(generics.RetrieveUpdateDestroyAPIView):
             # statement created before now want to update it
             elif (current_is_paid == True and current_expense_amount != updated_expense_amount):
                 # update amount to the bank model amount
-                print("FROM UPDATING NOT MATch")
                 bank.amount_of_money = (bank.amount_of_money + current_expense_amount) - updated_expense_amount
                 bank.save()
-                agentPayable_expense_statement.amount_of_money = updated_expense_amount
-                agentPayable_expense_statement.save()
-            
             else:
                 messages.warning(request, 'Please Check again!')
-        else:
-            
+            agentPayable_expense_statement.amount_of_money = updated_expense_amount
+            agentPayable_expense_statement.save()
+
+        elif(bank_connection == False):
             bank.amount_of_money = bank.amount_of_money + current_expense_amount
             bank.save()
             # companyPayable_expense_statement.amount_of_money = updated_expense_amount

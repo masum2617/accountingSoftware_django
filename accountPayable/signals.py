@@ -47,7 +47,7 @@ def japansShool_post_save(sender,instance, created, **kwargs):
 def agentPayable_post_save(sender,instance, created, **kwargs):
     if created:
         if instance.payment_bank is not None and instance.connect_with_bank == True:
-            updateStatementForExepenses( Statement,instance.agent_name,"Agent Payable", instance.payable_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
+            updateStatementForExepenses( Statement,instance.agent_name.agent_name,"Agent Payable", instance.payable_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
         else:
             pass
 

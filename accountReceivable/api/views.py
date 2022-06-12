@@ -59,7 +59,7 @@ class CompanyReceivableDetailView(generics.RetrieveUpdateDestroyAPIView):
                 receivable_amount = int(request.data.get('receivable_amount'))
                 date_of_receive = request.data.get('date_of_receive')
                 received_by = request.data.get('received_by')
-                bank.amount_of_money = bank.amount_of_money+receivable_amount
+                bank.amount_of_money = bank.amount_of_money + receivable_amount
                 bank.save()
                 companyReceivable_receive_statement=Statement.objects.create(coming_from_sector=company_name,payment_category="Company Receivable", received_by=received_by, amount_of_money=receivable_amount, date_of_transaction=date_of_receive, bank=bank, id_of_sector=companyReceivable.pk)
                 companyReceivable_receive_statement.save(force_insert=True)
