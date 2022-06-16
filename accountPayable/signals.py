@@ -57,12 +57,12 @@ def EmployeePayable_post_save(sender,instance, created, **kwargs):
     if created:
         if instance.payment_bank is not None and instance.connect_with_bank == True:
             if instance.salary_paid_status == True:
-                updateStatementForExepenses( Statement,"Employee salary: "+instance.employee.employee_name, instance.salary_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
+                updateStatementForExepenses( Statement, instance.employee.employee_name,"Employee salary", instance.salary_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
             if instance.loan_paid_status == True:
-                updateStatementForExepenses( Statement,"Employee Loan: "+instance.employee.employee_name, instance.loan_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
+                updateStatementForExepenses( Statement,instance.employee.employee_name,"Employee Loan", instance.loan_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
             if instance.bonus_paid_status == True:
-                updateStatementForExepenses( Statement,"Employee Bonus: "+instance.employee.employee_name, instance.bonus_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
+                updateStatementForExepenses( Statement,instance.employee.employee_name,"Employee Bonus", instance.bonus_amount,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
             if instance.medicalExpense_paid_status == True:
-                updateStatementForExepenses( Statement,"Employee Medical Expense: "+instance.employee.employee_name, instance.medical_expense,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
+                updateStatementForExepenses( Statement,instance.employee.employee_name,"Employee Medical Expense", instance.medical_expense,instance.date_of_payment,instance.payment_bank, instance.payment_bank.id, instance.id)
         else:
             pass

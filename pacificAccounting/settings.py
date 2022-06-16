@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'test_without_migrations',
     'django_nose',
     'rest_framework',
-
+    "corsheaders",
     'drf_messages',
 
 ]
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -150,3 +151,4 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEST_WITHOUT_MIGRATIONS_COMMAND = 'django_nose.management.commands.test.Command'
 MESSAGE_STORAGE = "drf_messages.storage.DBStorage"
+CORS_ALLOW_ALL_ORIGINS = True
