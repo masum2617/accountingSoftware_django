@@ -1,4 +1,4 @@
-from ..models import Student, EducationalRecord,EmergencyContact
+from ..models import Student, EducationalRecord
 from rest_framework import serializers
 
 
@@ -7,15 +7,15 @@ class EducationalRecordSerializer(serializers.ModelSerializer):
         model = EducationalRecord
         fields = '__all__'
 
-class EmergencyContactSerializer(serializers.ModelSerializer):
+# class EmergencyContactSerializer(serializers.ModelSerializer):
    
-    class Meta:
-        model = EmergencyContact
-        fields = '__all__'
+#     class Meta:
+#         model = EmergencyContact
+#         fields = '__all__'
 
 class StudentSerializer(serializers.ModelSerializer):
     student_educational_record = EducationalRecordSerializer(many=True)
-    emergencyContact = EmergencyContactSerializer(many=True)
+    # emergencyContact = EmergencyContactSerializer(many=True)
     class Meta:
         model = Student
         fields = '__all__'

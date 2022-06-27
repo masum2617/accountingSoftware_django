@@ -1,7 +1,13 @@
 from django.contrib import admin
-from .models import Student, EducationalRecord,EmergencyContact
-# Register your models here.
+# from .models import Student, EducationalRecord,EmergencyContact
+from .models import Student, EducationalRecord
 
-admin.site.register(Student)
-admin.site.register(EducationalRecord)
-admin.site.register(EmergencyContact)
+class EducationalRecordAdmin(admin.ModelAdmin):
+    list_display = ['id','student' ]
+
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ['id','student_name','student_id' ]
+
+admin.site.register(Student,StudentAdmin)
+admin.site.register(EducationalRecord, EducationalRecordAdmin)
+# admin.site.register(EmergencyContact)

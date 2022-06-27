@@ -22,21 +22,28 @@ class Student(models.Model):
     student_email = models.EmailField(max_length=50, unique=True)
     date_of_registration  = models.DateField(auto_now_add=True, blank=True )
     student_photo = models.ImageField(upload_to='students/', null=True, blank=True)
-    
+
+    # Emergency Contact
+    emergency_person_name = models.CharField(max_length=50, null=True)
+    emergency_person_relation = models.CharField(max_length=50,null=True, blank=True)
+    emergency_person_occupation = models.CharField(max_length=50,null=True, blank=True)
+    emergency_person_contact = models.BigIntegerField(null=True)
+    emergency_person_address = models.TextField(null=True, blank=True)
+
 
     def __str__(self):
         return self.student_name
 
-class EmergencyContact(models.Model):
-    full_name = models.CharField(max_length=50)
-    relation = models.CharField(max_length=50,null=True, blank=True)
-    occupation = models.CharField(max_length=50,null=True, blank=True)
-    contact_number = models.BigIntegerField()
-    address = models.TextField(null=True, blank=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="emergencyContact")
+# class EmergencyContact(models.Model):
+#     full_name = models.CharField(max_length=50)
+#     relation = models.CharField(max_length=50,null=True, blank=True)
+#     occupation = models.CharField(max_length=50,null=True, blank=True)
+#     contact_number = models.BigIntegerField()
+#     address = models.TextField(null=True, blank=True)
+#     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="emergencyContact")
 
-    def __str__(self):
-        return self.full_name
+#     def __str__(self):
+#         return self.full_name
 
 class EducationalRecord(models.Model):
 

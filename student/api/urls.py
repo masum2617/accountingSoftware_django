@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import StudentListView,StudentDetailView, EducationalRecordDetailView,EducationalRecordListView,EmergencyContactDetailView,EmergencyContactRecordListView
+# from .views import StudentListView,StudentDetailView, EducationalRecordDetailView,EducationalRecordListView,EmergencyContactDetailView,EmergencyContactRecordListView
+
+from .views import StudentListView, StudentDetailView, EducationalRecordListView,EducationalRecordDetailView
 
 urlpatterns =[
     path('student-list/', StudentListView.as_view(), name='student-list' ),
@@ -8,6 +10,6 @@ urlpatterns =[
     path('educational-record/', EducationalRecordListView.as_view(), name='educational-list' ),
     path('educational-record-detail/<int:pk>/', EducationalRecordDetailView.as_view(), name='educational-detail' ),
 
-    path('emergency-contact-list/', EmergencyContactRecordListView.as_view(), name='emergency-list' ),
-    path('emergency-contact-detail/<int:pk>/', EmergencyContactDetailView.as_view(), name='emergency-detail' ),
+    # path('emergency-contact-list/', EmergencyContactRecordListView.as_view(), name='emergency-list' ),
+    # path('emergency-contact-detail/<int:pk>/', EmergencyContactDetailView.as_view(), name='emergency-detail' ),
 ]
